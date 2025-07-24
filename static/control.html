@@ -1,0 +1,115 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Control Page</title>
+    <style>
+        body { font-family: sans-serif; padding: 2em; }
+        .control-group { margin-bottom: 1em; }
+        label { display: block; margin-bottom: 0.5em; }
+        input[type="text"] { width: 300px; padding: 0.5em; }
+        input[type="range"] { width: 300px; }
+        button { padding: 0.5em 1em; margin-right: 0.5em; }
+    </style>
+</head>
+<body>
+    <h1>YouTube Remote Control</h1>
+    
+    <div class="control-group">
+        <label for="videoUrl">YouTube Video URL or ID:</label>
+        <input type="text" id="videoUrl" placeholder="e.g., https://www.youtube.com/watch?v=dQw4w9WgXcQ">
+        <button id="loadBtn">Load Video</button>
+    </div>
+
+    <div class="control-group">
+        <label>Playback:</label>
+        <button id="playBtn">Play</button>
+        <button id="pauseBtn">Pause</button>
+    </div>
+
+    <div class="control-group">
+        <label for="volume">Volume:</label>
+        <input type="range" id="volume" min="0" max="100" value="100">
+    </div>
+
+    <script>
+        const videoUrlInput = document.getElementById('videoUrl');
+        const loadBtn = document.getElementById('loadBtn');
+        const playBtn = document.getElementById('playBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const volumeSlider = document.getElementById('volume');
+
+        let ws;
+
+        function connect() {
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            ws = new WebSocket(`${protocol}//${window.location.host}/ws`);
+
+            ws.onopen = function() {
+                console.log('WebSocket connected');
+                ws.send(JSON.stringify({type: 'register', client: 'controller'}));
+            };
+
+            ws.onclose = function() {
+                console.log('WebSocket disconnected. Reconnecting...');
+                setTimeout(connect, 2000);
+            };
+
+            ws.onerror = function(error) {
+                console.error('WebSocket Error:', error);
+                ws.close();
+            };
+        }
+
+        function sendCommand(command) {
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify(command));
+            } else {
+                console.log('WebSocket is not connected.');
+            }
+        }
+
+        function extractVideoID(url) {
+            try {
+                const urlObj = new URL(url);
+                if (urlObj.hostname === 'youtu.be') {
+                    return urlObj.pathname.slice(1);
+                }
+                if (urlObj.hostname.includes('youtube.com')) {
+                    const videoId = urlObj.searchParams.get('v');
+                    if (videoId) return videoId;
+                }
+            } catch (e) {
+                // Not a full URL, might be just an ID
+            }
+            // Fallback for raw ID or invalid URL format
+            const regex = /(?:v=|be\/)([a-zA-Z0-9_-]{11})/;
+            const match = url.match(regex);
+            return match ? match[1] : url;
+        }
+
+        loadBtn.addEventListener('click', () => {
+            const videoId = extractVideoID(videoUrlInput.value.trim());
+            if (videoId) {
+                sendCommand({ command: 'load', videoId: videoId });
+            } else {
+                alert('Invalid YouTube URL or Video ID');
+            }
+        });
+
+        playBtn.addEventListener('click', () => {
+            sendCommand({ command: 'play' });
+        });
+
+        pauseBtn.addEventListener('click', () => {
+            sendCommand({ command: 'pause' });
+        });
+
+        volumeSlider.addEventListener('input', () => {
+            sendCommand({ command: 'setVolume', volume: parseInt(volumeSlider.value, 10) });
+        });
+
+        connect();
+    </script>
+</body>
+</html>
