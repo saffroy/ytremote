@@ -29,10 +29,13 @@ def control():
 @app.route('/ws')
 def ws_socket():
     """Handles WebSocket connections."""
-    ws = Server(request.environ)
-    client_type = None
     client_address = request.environ.get('REMOTE_ADDR')
+    logging.info(f"/ws request from {client_address}, headers: {request.headers}")
+
+    ws = None
+    client_type = None
     try:
+        ws = Server(request.environ)
         reg_message = ws.receive()
         data = json.loads(reg_message)
         if data.get('type') == 'register':
