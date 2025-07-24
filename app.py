@@ -14,17 +14,17 @@ control_clients = set()
 @app.route('/')
 def index():
     """Serves the landing page."""
-    return render_template('index.html')
+    return app.send_static_file('index.html')
 
 @app.route('/view')
 def view():
     """Serves the view page."""
-    return render_template('view.html')
+    return app.send_static_file('view.html')
 
 @app.route('/control')
 def control():
     """Serves the control page."""
-    return render_template('control.html')
+    return app.send_static_file('control.html')
 
 @app.route('/ws', websocket=True)
 def ws_socket():
