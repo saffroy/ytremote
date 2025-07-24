@@ -6,28 +6,28 @@ from simple_websocket import Server, ConnectionClosed
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-app = Flask(__name__)
-ws_server = Server(app)
+flask_app = Flask(__name__)
+app = Server(flask_app)
 
 view_clients = set()
 control_clients = set()
 
-@app.route('/')
+@flask_app.route('/')
 def index():
     """Serves the landing page."""
     return render_template('index.html')
 
-@app.route('/view')
+@flask_app.route('/view')
 def view():
     """Serves the view page."""
     return render_template('view.html')
 
-@app.route('/control')
+@flask_app.route('/control')
 def control():
     """Serves the control page."""
     return render_template('control.html')
 
-@ws_server.route('/ws')
+@app.route('/ws')
 def ws_socket(ws):
     """Handles WebSocket connections."""
     client_type = None
