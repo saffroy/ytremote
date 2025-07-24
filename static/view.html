@@ -66,6 +66,12 @@
                     case 'pause':
                         player.pauseVideo();
                         break;
+                    case 'back':
+                        player.seekTo(player.getCurrentTime() - 20);
+                        break;
+                    case 'forward':
+                        player.seekTo(player.getCurrentTime() + 20);
+                        break;
                     case 'setVolume':
                         player.setVolume(data.volume);
                         break;

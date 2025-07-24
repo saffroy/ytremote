@@ -28,6 +28,12 @@
     </div>
 
     <div class="control-group">
+        <label>Position:</label>
+        <button id="backBtn">Back</button>
+        <button id="forwardBtn">Forward</button>
+    </div>
+
+    <div class="control-group">
         <label for="volume">Volume:</label>
         <input type="range" id="volume" min="0" max="100" value="100">
     </div>
@@ -37,6 +43,8 @@
         const loadBtn = document.getElementById('loadBtn');
         const playBtn = document.getElementById('playBtn');
         const pauseBtn = document.getElementById('pauseBtn');
+        const backBtn = document.getElementById('backBtn');
+        const forwardBtn = document.getElementById('forwardBtn');
         const volumeSlider = document.getElementById('volume');
 
         let ws;
@@ -103,6 +111,14 @@
 
         pauseBtn.addEventListener('click', () => {
             sendCommand({ command: 'pause' });
+        });
+
+        backBtn.addEventListener('click', () => {
+            sendCommand({ command: 'back' });
+        });
+
+        forwardBtn.addEventListener('click', () => {
+            sendCommand({ command: 'forward' });
         });
 
         volumeSlider.addEventListener('input', () => {
