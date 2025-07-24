@@ -1,37 +1,37 @@
 import json
 import logging
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from simple_websocket import Server, ConnectionClosed
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-flask_app = Flask(__name__)
-app = Server(flask_app)
+app = Flask(__name__)
 
 view_clients = set()
 control_clients = set()
 
-@flask_app.route('/')
+@app.route('/')
 def index():
     """Serves the landing page."""
     return render_template('index.html')
 
-@flask_app.route('/view')
+@app.route('/view')
 def view():
     """Serves the view page."""
     return render_template('view.html')
 
-@flask_app.route('/control')
+@app.route('/control')
 def control():
     """Serves the control page."""
     return render_template('control.html')
 
 @app.route('/ws')
-def ws_socket(ws):
+def ws_socket():
     """Handles WebSocket connections."""
+    ws = Server(request.environ)
     client_type = None
-    client_address = ws.environ.get('REMOTE_ADDR')
+    client_address = request.environ.get('REMOTE_ADDR')
     try:
         reg_message = ws.receive()
         data = json.loads(reg_message)
@@ -71,6 +71,7 @@ def ws_socket(ws):
         elif client_type == 'controller' and ws in control_clients:
             control_clients.remove(ws)
             logging.info(f"Controller from {client_address} removed.")
+    return ''
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
