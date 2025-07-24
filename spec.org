@@ -1,0 +1,26 @@
+We want to build a small web app in python+js.
+
+The app has 3 pages:
+
+- a landing page gives a choice to go to a control page or a view page
+
+- the view page connects back to the backend and awaits commands over
+  ws: commands can have the page create a youtube video player, start
+  playing, pausing, adjusting volume, switch to a new video, etc.
+
+- the control page also connects to the backend, and lets the user
+  send commands to other browsers connected on the view page, using
+  buttons (play/pause), a slider (volume), a text field (youtube video
+  url)
+
+The backend serves the static pages and creates a websocket server to
+broadcast commands from a control client to the view clients.
+
+For the backend, use flask and simple-websocket. For the pages, use
+plain javascript.
+
+Some documents:
+
+https://simple-websocket.readthedocs.io/en/latest/intro.html
+
+https://developers.google.com/youtube/iframe_api_reference
