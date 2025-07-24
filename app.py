@@ -26,7 +26,7 @@ def control():
     """Serves the control page."""
     return render_template('control.html')
 
-@app.route('/ws')
+@app.route('/ws', websocket=True)
 def ws_socket():
     """Handles WebSocket connections."""
     client_address = request.environ.get('REMOTE_ADDR')
@@ -35,7 +35,7 @@ def ws_socket():
     ws = None
     client_type = None
     try:
-        ws = Server(request.environ)
+        ws = Server.accept(request.environ)
         reg_message = ws.receive()
         data = json.loads(reg_message)
         if data.get('type') == 'register':
