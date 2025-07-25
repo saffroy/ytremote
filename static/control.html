@@ -42,6 +42,26 @@
             <label for="volume" class="form-label">Volume:</label>
             <input type="range" id="volume" class="form-range" min="0" max="100" value="20">
         </div>
+
+        <div class="mb-3">
+            <label class="form-label">Playback Rate:</label>
+            <div class="btn-group" role="group">
+                <input type="radio" class="btn-check" name="playbackRate" id="rate1" value="1" checked>
+                <label class="btn btn-outline-primary" for="rate1">1x</label>
+
+                <input type="radio" class="btn-check" name="playbackRate" id="rate1.25" value="1.25">
+                <label class="btn btn-outline-primary" for="rate1.25">1.25x</label>
+
+                <input type="radio" class="btn-check" name="playbackRate" id="rate1.5" value="1.5">
+                <label class="btn btn-outline-primary" for="rate1.5">1.5x</label>
+
+                <input type="radio" class="btn-check" name="playbackRate" id="rate1.75" value="1.75">
+                <label class="btn btn-outline-primary" for="rate1.75">1.75x</label>
+
+                <input type="radio" class="btn-check" name="playbackRate" id="rate2" value="2">
+                <label class="btn btn-outline-primary" for="rate2">2x</label>
+            </div>
+        </div>
     </div>
     <script>
         const videoUrlInput = document.getElementById('videoUrl');
@@ -131,6 +151,12 @@
 
         volumeSlider.addEventListener('input', () => {
             sendCommand({ command: 'setVolume', volume: parseInt(volumeSlider.value, 10) });
+        });
+
+        document.querySelectorAll('input[name="playbackRate"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                sendCommand({ command: 'setPlaybackRate', rate: parseFloat(e.target.value) });
+            });
         });
 
         connect();
