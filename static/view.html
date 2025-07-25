@@ -20,7 +20,10 @@
 
         function connect() {
             const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-            ws = new WebSocket(`${protocol}//${window.location.host}/ytremote/ws`);
+            const pathComp = window.location.pathname.split('/');
+            pathComp.pop()
+            const prefix = pathComp.join('/');
+            ws = new WebSocket(`${protocol}//${window.location.host}${prefix}/ws`);
 
             ws.onopen = function() {
                 console.log('WebSocket connected');
