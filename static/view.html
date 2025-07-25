@@ -56,6 +56,11 @@
                                         'controls': 1,
                                         'rel': 0,
                                         'showinfo': 0
+                                    },
+                                    events: {
+                                        'onReady': function(event) {
+                                            event.target.setVolume(20);
+                                        }
                                     }
                                 });
                             };
